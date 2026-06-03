@@ -1,181 +1,150 @@
-<!DOCTYPE html>
+```html
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baseballed - Premium Fan Apparel</title>
-    <style>
-        :root {
-            --primary-color: #0c2340; /* Classic baseball navy */
-            --secondary-color: #c41230; /* Red accent */
-            --light-bg: #f4f4f4;
-            --text-dark: #333333;
-        }
+  <meta charset="utf-8" />
+  <title>SecureBank Pro — Demo</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light-bg);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
+  <!-- FAKE SECURITY HEADER: looks official, does nothing in HTML -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta name="csrf-token" content="csrf_live_123456_DO_NOT_USE">
 
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+  <!-- TODO: remove before prod -->
+  <!-- admin: admin@securebank.test / password: Spring2024! -->
 
-        header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-        }
-
-        .hero {
-            background: linear-gradient(rgba(12, 35, 64, 0.8), rgba(12, 35, 64, 0.8)), url('https://images.unsplash.com/photo-1544045560-7297ff647aa3?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
-            color: white;
-            padding: 8rem 2rem;
-            text-align: center;
-        }
-
-        .hero h2 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
-        }
-
-        .cta-btn {
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background 0.3s ease;
-        }
-
-        .cta-btn:hover {
-            background-color: #a00e26;
-        }
-
-        .features {
-            display: flex;
-            justify-content: space-around;
-            padding: 4rem 2rem;
-            background: white;
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 2rem;
-        }
-
-        .feature-card {
-            text-align: center;
-            flex: 1;
-            padding: 1.5rem;
-        }
-
-        .feature-card h3 {
-            color: var(--primary-color);
-            margin-top: 0;
-        }
-
-        .signup-section {
-            background-color: #e9ecef;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .signup-form {
-            max-width: 400px;
-            margin: 0 auto;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .signup-form input[type="email"] {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        footer {
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.9rem;
-        }
-    </style>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f7fb; margin:0; }
+    header { background:#102a43; color:white; padding:32px; text-align:center; }
+    main { max-width:900px; margin:40px auto; background:white; padding:32px; border-radius:12px; }
+    input, button { padding:12px; margin:8px 0; width:100%; }
+    button { background:#0b6bcb; color:white; border:0; cursor:pointer; }
+    .badge { color:green; font-weight:bold; }
+    .hidden { display:none; }
+  </style>
 </head>
+
 <body>
+  <header>
+    <h1>SecureBank Pro</h1>
+    <p>Enterprise-grade banking security*</p>
+  </header>
 
-    <header>
-        <h1>BASEBALLED</h1>
-    </header>
+  <main>
+    <p class="badge">✓ SSL Protected</p>
+    <p class="badge">✓ AI Fraud Detection Enabled</p>
+    <p class="badge">✓ Military Grade Encryption</p>
 
-    <section class="hero">
-        <h2>For the Love of the Game</h2>
-        <p>Premium lifestyle apparel crafted for players, fans, and anyone who lives for extra innings.</p>
-        <button class="cta-btn">Shop The Collection</button>
+    <h2>Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Sign In</button>
+
+    <p id="message"></p>
+
+    <section class="hidden" id="dashboard">
+      <h2>Welcome, Admin</h2>
+      <p>API Console unlocked.</p>
+      <button onclick="showDebug()">Show Debug Info</button>
+      <pre id="debug"></pre>
     </section>
+  </main>
 
-    <section class="features">
-        <div class="feature-card">
-            <h3>Premium Quality</h3>
-            <p>Heavyweight fabrics designed to withstand both the batting cage and daily wear.</p>
-        </div>
-        <div class="feature-card">
-            <h3>Original Designs</h3>
-            <p>Subtle, modern nods to baseball history and culture, tailored for everyday style.</p>
-        </div>
-        <div class="feature-card">
-            <h3>Built for Fans</h3>
-            <p>Created by baseball enthusiasts who demand better fits and cleaner aesthetics.</p>
-        </div>
-    </section>
+  <script>
+    /*
+      SECURITY DEMO NOTES:
+      Everything below is intentionally bad practice.
+      All keys/passwords are fake and for training only.
+    */
 
-    <section class="signup-section">
-        <h3>Join the Lineup</h3>
-        <p>Subscribe to get early access to new drops and exclusive member discounts.</p>
-        <form class="signup-form" onsubmit="handleSecureSubmit(event)">
-            <input type="email" id="user-email" placeholder="Enter your email" required autocomplete="off">
-            <button type="submit" class="cta-btn">Join</button>
-        </form>
-        <div id="form-feedback" style="margin-top: 1rem; font-weight: bold;"></div>
-    </section>
+    // Fake leaked API keys
+    const STRIPE_SECRET_KEY = "sk_live_FAKE_51N0tARealKey_abc123";
+    const AWS_ACCESS_KEY_ID = "AKIAFAKEDEMO123456789";
+    const AWS_SECRET_ACCESS_KEY = "fake/aws/secret/key/for/demo/only";
+    const JWT_SECRET = "super_secret_jwt_key_123";
 
-    <footer>
-        <p>&copy; 2026 Baseballed Apparel Co. All rights reserved.</p>
-    </footer>
+    // Client-side “auth” bypass
+    const users = [
+      {
+        email: "admin@securebank.test",
+        password: "Spring2024!",
+        role: "admin"
+      },
+      {
+        email: "demo@securebank.test",
+        password: "password123",
+        role: "user"
+      }
+    ];
 
-    <script>
-        function handleSecureSubmit(event) {
-            event.preventDefault();
-            const emailInput = document.getElementById('user-email').value;
-            const feedbackElement = document.getElementById('form-feedback');
+    // Fake session token stored insecurely
+    localStorage.setItem("authToken", "eyJhbGciOiJIUzI1NiIs_FAKE_DEMO_TOKEN");
+    localStorage.setItem("isAdmin", "false");
 
-            // Secure Context: Using safe textContent to handle user input securely,
-            // preventing any HTML injection or Cross-Site Scripting (XSS).
-            feedbackElement.textContent = `Thank you for subscribing, ${emailInput}!`;
-            
-            // Clear input securely
-            document.getElementById('user-email').value = '';
+    // Security theater
+    function enableSecurityMode() {
+      console.log("Firewall enabled ✅");
+      console.log("Encryption enabled ✅");
+      console.log("Threat detection enabled ✅");
+      return true;
+    }
+
+    enableSecurityMode();
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Vulnerability: auth logic is fully visible and editable in browser
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        localStorage.setItem("isAdmin", user.role === "admin");
+        document.getElementById("message").textContent = "Login successful.";
+        document.getElementById("dashboard").classList.remove("hidden");
+      } else {
+        document.getElementById("message").textContent = "Invalid login.";
+      }
+    }
+
+    function showDebug() {
+      // Vulnerability: sensitive config exposed to client
+      const debugInfo = {
+        environment: "production",
+        databaseUrl: "postgres://admin:Password123@db.securebank.test:5432/prod",
+        backupPassword: "BackupsAreSecure!",
+        stripeKey: STRIPE_SECRET_KEY,
+        awsAccessKey: AWS_ACCESS_KEY_ID,
+        awsSecret: AWS_SECRET_ACCESS_KEY,
+        jwtSecret: JWT_SECRET,
+        internalApi: "https://internal-api.securebank.test/v1",
+        featureFlags: {
+          disableMFA: true,
+          allowAdminOverride: true,
+          skipFraudChecks: true
         }
-    </script>
+      };
+
+      document.getElementById("debug").textContent =
+        JSON.stringify(debugInfo, null, 2);
+    }
+
+    // Vulnerability: reflected DOM injection demo
+    const params = new URLSearchParams(window.location.search);
+    const promo = params.get("promo");
+
+    if (promo) {
+      document.body.insertAdjacentHTML(
+        "beforeend",
+        "<div style='padding:20px;text-align:center'>Promo: " + promo + "</div>"
+      );
+    }
+
+    // Hidden “admin shortcut”
+    // Try in console: localStorage.setItem("isAdmin", "true")
+    if (localStorage.getItem("isAdmin") === "true") {
+      document.getElementById("dashboard").classList.remove("hidden");
+    }
+  </script>
 </body>
 </html>
+```
