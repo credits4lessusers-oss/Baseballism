@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  CloudVault — INTENTIONALLY VULNERABLE DEMO LANDING PAGE
+  ============================================================================
+  PURPOSE: Security-training / "spot the vulnerability" exercise.
+  WARNING: This file is DELIBERATELY INSECURE. Do NOT deploy it.
+           Every credential, key, and token below is a FAKE dummy value.
+           None of them work against any real service.
+
+  A full annotated answer key is at the BOTTOM of this file (search "ANSWER KEY").
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudVault — Secure Cloud Storage</title>
+
+  <!-- VULN #1: Hardcoded third-party API keys exposed in client-side source.
+       All FAKE. In real code these would be server-side only. -->
+  <script>
+    const CONFIG = {
+      STRIPE_SECRET_KEY: "sk_live_FAKE_51AbCdEf00000DoNotUseExample",
+      AWS_ACCESS_KEY_ID: "AKIAFAKEEXAMPLE0000",
+      AWS_SECRET_ACCESS_KEY: "wJalrFAKE/EXAMPLE/KEY/DoNotUse00000000",
+      OPENAI_API_KEY: "sk-proj-FAKE-do-not-use-0000000000000000",
+      GOOGLE_MAPS_KEY: "AIzaSyFAKE_EXAMPLE_KEY_0000000000000",
+      DB_CONNECTION: "postgres://admin:Sup3rS3cret!@db.internal.example.com:5432/prod"
+    };
+  </script>
+
+  <!-- VULN #2: Outdated library with known CVEs loaded from CDN, no SRI hash. -->
+  <script src="https://code.jquery.com/jquery-1.7.2.min.js"></script>
+
+  <style>
+    :root { --bg:#0f1419; --card:#1a212b; --accent:#4f8cff; --text:#e6edf3; --muted:#8b98a5; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+           background:var(--bg); color:var(--text); line-height:1.5; }
+    header { display:flex; justify-content:space-between; align-items:center;
+             padding:20px 40px; border-bottom:1px solid #232d3a; }
+    .logo { font-weight:700; font-size:1.4rem; color:var(--accent); }
+    nav a { color:var(--muted); text-decoration:none; margin-left:24px; font-size:.95rem; }
+    .hero { text-align:center; padding:90px 20px 60px; }
+    .hero h1 { font-size:3rem; margin-bottom:16px; }
+    .hero p { color:var(--muted); font-size:1.2rem; max-width:600px; margin:0 auto 32px; }
+    .btn { background:var(--accent); color:#fff; border:none; padding:14px 30px;
+           border-radius:8px; font-size:1rem; cursor:pointer; text-decoration:none; }
+    .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+                gap:24px; max-width:1000px; margin:40px auto; padding:0 20px; }
+    .card { background:var(--card); border:1px solid #232d3a; border-radius:12px; padding:28px; }
+    .card h3 { margin-bottom:10px; color:var(--accent); }
+    .card p { color:var(--muted); font-size:.95rem; }
+    .auth { max-width:380px; margin:40px auto 80px; background:var(--card);
+            border:1px solid #232d3a; border-radius:12px; padding:32px; }
+    .auth h2 { margin-bottom:20px; text-align:center; }
+    .auth input { width:100%; padding:12px; margin-bottom:14px; border-radius:8px;
+                  border:1px solid #2a3645; background:#0d1117; color:var(--text); }
+    .auth button { width:100%; }
+    #welcome { text-align:center; padding:20px; color:var(--accent); }
+    footer { text-align:center; padding:40px; color:var(--muted); font-size:.85rem;
+             border-top:1px solid #232d3a; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🔒 CloudVault</div>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#login">Login</a>
+      <!-- VULN #3: Internal/admin endpoint disclosed in a comment.
+           TODO(devops): move admin panel off public domain before launch
+           Admin URL: https://cloudvault.example.com/admin?debug=true
+           Default creds still active: admin / admin123  -->
+      <a href="#">Pricing</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Your files. Locked down tight.</h1>
+    <p>Bank-grade encryption, zero-knowledge architecture, and a 100% security guarantee.
+       Trusted by over 2 million users worldwide.</p>
+    <a href="#login" class="btn">Get Started Free</a>
+  </section>
+
+  <section class="features" id="features">
+    <div class="card">
+      <h3>🛡️ Military-Grade Security</h3>
+      <p>We use 4096-bit quantum-resistant encryption that no one can ever break. Guaranteed.</p>
+    </div>
+    <div class="card">
+      <h3>⚡ Lightning Sync</h3>
+      <p>Your data syncs instantly across every device, everywhere, all the time.</p>
+    </div>
+    <div class="card">
+      <h3>✅ 100% Breach-Proof</h3>
+      <p>We have never been hacked and we never will be. Your data is completely safe.</p>
+    </div>
+  </section>
+
+  <!-- VULN #4: Login form uses GET over a non-TLS action, so credentials
+       land in the URL / server logs / browser history. -->
+  <section class="auth" id="login">
+    <h2>Sign In</h2>
+    <form action="http://api.cloudvault.example.com/login" method="GET">
+      <!-- VULN #5: Hidden field leaks a privileged default + an internal token. -->
+      <input type="hidden" name="role" value="standard" />
+      <input type="hidden" name="csrf" value="STATIC_TOKEN_12345_never_rotates" />
+      <input type="text" id="username" name="username" placeholder="Username" autocomplete="off" />
+      <input type="password" id="password" name="password" placeholder="Password" autocomplete="off" />
+      <button type="button" class="btn" onclick="login()">Log In</button>
+    </form>
+    <div id="welcome"></div>
+  </section>
+
+  <footer>
+    <span id="greeting"></span>
+    © 2026 CloudVault Inc. All rights reserved.
+  </footer>
+
+  <script>
+    // VULN #6: Client-side-only authentication. The password is checked in
+    // the browser, so anyone can read it in source or bypass the check entirely.
+    const VALID_USER = "admin";
+    const VALID_PASS = "P@ssw0rd2024!";   // hardcoded plaintext credential
+
+    function login() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      if (u === VALID_USER && p === VALID_PASS) {
+        // VULN #7: Auth token persisted in plaintext in browser storage.
+        try { localStorage.setItem("auth_token", "ADMIN_SESSION_FAKE_eyJhbGciOi"); } catch (e) {}
+        document.getElementById("welcome").textContent = "Welcome back, " + u + "!";
+      } else {
+        // VULN #8: Verbose error leaks whether the username exists ("user enumeration").
+        document.getElementById("welcome").textContent =
+          (u === VALID_USER) ? "Wrong password for admin." : "No such user: " + u;
+      }
+    }
+
+    // VULN #9: Reflected XSS sink. ?name= from the URL is written straight to
+    // innerHTML with no sanitization. e.g. ?name=<img src=x onerror=alert(1)>
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("name")) {
+      document.getElementById("greeting").innerHTML = "Hi " + params.get("name") + " — ";
+    }
+
+    // VULN #10: Backdoor / hidden debug mode that bypasses login entirely.
+    if (params.get("debug") === "1") {
+      console.log("DEBUG MODE — config dump:", CONFIG);
+      try { localStorage.setItem("auth_token", "ADMIN_SESSION_FAKE_eyJhbGciOi"); } catch (e) {}
+      document.getElementById("welcome").textContent = "Welcome back, admin! (debug bypass)";
+    }
+  </script>
+
+  <!--
+  ============================================================================
+  ANSWER KEY  (remove this block when handing the file to trainees)
+  ============================================================================
+   #1  Hardcoded secrets in client JS — Stripe/AWS/OpenAI/Maps keys + DB
+       connection string with embedded password, all readable by anyone.
+       Fix: keep secrets server-side; never ship them to the browser.
+
+   #2  Outdated dependency (jQuery 1.7.2) loaded over a CDN with no
+       Subresource Integrity (SRI) hash. Old version has known XSS CVEs;
+       missing SRI allows CDN tampering. Fix: update + add integrity="sha384-...".
+
+   #3  Information disclosure in HTML comment — internal admin URL, a
+       debug flag, and default admin/admin123 creds. Fix: strip comments
+       in prod builds; never store creds anywhere in source.
+
+   #4  Credentials sent via GET over plain HTTP — they leak into the URL,
+       server logs, proxies, and browser history. Fix: POST over HTTPS only.
+
+   #5  Sensitive hidden form fields — a "role" field a user can tamper with
+       (privilege escalation) and a static, never-rotating CSRF token (useless
+       as a CSRF defense). Fix: enforce roles server-side; per-session CSRF tokens.
+
+   #6  Client-side-only authentication with a hardcoded password. Anyone can
+       read it in View Source or just call the success path. Fix: authenticate
+       on the server; never compare passwords in client code.
+
+   #7  Auth token stored in localStorage in plaintext — readable by any XSS
+       payload. Fix: use httpOnly, Secure, SameSite cookies for session tokens.
+
+   #8  User-enumeration via distinct error messages ("no such user" vs
+       "wrong password"). Fix: return one generic "invalid credentials" message.
+
+   #9  Reflected XSS — ?name= is concatenated into innerHTML unsanitized.
+       Try ?name=<img src=x onerror=alert(1)>. Fix: use textContent, or
+       encode/sanitize all untrusted input; add a Content-Security-Policy.
+
+   #10 Backdoor debug bypass — ?debug=1 dumps secrets to console and grants
+       an admin session with no auth. Fix: remove debug backdoors; never
+       gate privileged behavior on a client-visible query param.
+
+   BONUS: marketing copy makes absolute security claims ("100% breach-proof",
+   "no one can ever break it") — a social-engineering / false-assurance red flag.
+  ============================================================================
+  -->
+
+</body>
+</html>
