@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baseballed - Premium Fan Apparel</title>
+    <style>
+        :root {
+            --primary-color: #0c2340; /* Classic baseball navy */
+            --secondary-color: #c41230; /* Red accent */
+            --light-bg: #f4f4f4;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(12, 35, 64, 0.8), rgba(12, 35, 64, 0.8)), url('https://images.unsplash.com/photo-1544045560-7297ff647aa3?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+            color: white;
+            padding: 8rem 2rem;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .cta-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #a00e26;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 4rem 2rem;
+            background: white;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            flex: 1;
+            padding: 1.5rem;
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .signup-section {
+            background-color: #e9ecef;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .signup-form {
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .signup-form input[type="email"] {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>BASEBALLED</h1>
+    </header>
+
+    <section class="hero">
+        <h2>For the Love of the Game</h2>
+        <p>Premium lifestyle apparel crafted for players, fans, and anyone who lives for extra innings.</p>
+        <button class="cta-btn">Shop The Collection</button>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Premium Quality</h3>
+            <p>Heavyweight fabrics designed to withstand both the batting cage and daily wear.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Original Designs</h3>
+            <p>Subtle, modern nods to baseball history and culture, tailored for everyday style.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Built for Fans</h3>
+            <p>Created by baseball enthusiasts who demand better fits and cleaner aesthetics.</p>
+        </div>
+    </section>
+
+    <section class="signup-section">
+        <h3>Join the Lineup</h3>
+        <p>Subscribe to get early access to new drops and exclusive member discounts.</p>
+        <form class="signup-form" onsubmit="handleSecureSubmit(event)">
+            <input type="email" id="user-email" placeholder="Enter your email" required autocomplete="off">
+            <button type="submit" class="cta-btn">Join</button>
+        </form>
+        <div id="form-feedback" style="margin-top: 1rem; font-weight: bold;"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Baseballed Apparel Co. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function handleSecureSubmit(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('user-email').value;
+            const feedbackElement = document.getElementById('form-feedback');
+
+            // Secure Context: Using safe textContent to handle user input securely,
+            // preventing any HTML injection or Cross-Site Scripting (XSS).
+            feedbackElement.textContent = `Thank you for subscribing, ${emailInput}!`;
+            
+            // Clear input securely
+            document.getElementById('user-email').value = '';
+        }
+    </script>
+</body>
+</html>
